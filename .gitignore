@@ -6,3 +6,5 @@
 */**/.idea/
 **/target/
 **/.idea/
+/testdata
+/atlassian-ide-plugin.xml
