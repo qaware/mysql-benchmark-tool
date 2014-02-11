@@ -1,7 +1,3 @@
-/**
- * ﻿Copyright 2012, Deutsche Telekom AG, DTAG GHS GIS. All rights reserved.
- */
-
 package de.qaware.mysqlbenchmark.logfile;
 
 import com.google.common.base.Strings;

@@ -1,7 +1,3 @@
-/**
- * ﻿Copyright 2012, Deutsche Telekom AG, DTAG GHS GIS. All rights reserved.
- */
-
 package de.qaware.mysqlbenchmark.console;
 
 import com.beust.jcommander.Parameter;
@@ -28,7 +24,7 @@ public class Parameters {
 
     @Parameter(names = {"-s"},
             description = "The connection string to the mysql server (without database name)."
-                    +" eg.: -c jdbc:mysql://localhost:3306/",
+                    + " eg.: -c jdbc:mysql://localhost:3306/",
             required = false)
     public String server = "jdbc:mysql://localhost:3306/";
 
@@ -62,12 +58,12 @@ public class Parameters {
 
     @Parameter(names = {"-id"},
             description = "Only execute queries from the log with this connection id. This parameter is optional.",
-            required =  false)
+            required = false)
     public String connectionID;
 
     @Parameter(names = {"-f"},
             description = "The result can be in default JETM style or CSV. JETM is default.",
-            required =  false)
+            required = false)
     public String format = "JETM";
 
 }

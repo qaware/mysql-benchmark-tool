@@ -1,7 +1,3 @@
-/**
- * ﻿Copyright 2012, Deutsche Telekom AG, DTAG GHS GIS. All rights reserved.
- */
-
 package de.qaware.mysqlbenchmark.sql;
 
 import java.sql.*;
@@ -34,9 +30,9 @@ public class SQLStatementExecutor {
     /**
      * open a mysql connection.
      *
-     * @param connectionString  where to connect to the mysql server
-     * @param username          mysql username
-     * @param password          mysql password
+     * @param connectionString where to connect to the mysql server
+     * @param username         mysql username
+     * @param password         mysql password
      */
     public void initConnection(String connectionString, String username, String password) throws SQLException {
         System.out.println("-------- Opening MySQL JDBC Connection ------------");

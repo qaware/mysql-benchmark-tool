@@ -1,6 +1,4 @@
-package de.qaware.mysqlbenchmark; /**
- * ﻿Copyright 2012, Deutsche Telekom AG, DTAG GHS GIS. All rights reserved.
- */
+package de.qaware.mysqlbenchmark;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -46,7 +44,7 @@ public class Main {
          */
         try {
             parser.parseLogFile(params.inputFile, params.connectionID, params.ignorePrefixes);
-            System.out.println("Read " + parser.getQueries().size() + " queries from file '"+params.inputFile +"'.");
+            System.out.println("Read " + parser.getQueries().size() + " queries from file '" + params.inputFile + "'.");
 
             SQLStatementExecutor executor = new SQLStatementExecutor();
             executor.initConnection(params.server + params.database, params.username, params.password);
@@ -63,7 +61,7 @@ public class Main {
             // get time measurements
             String result = benchmark.getResult(QueryBenchmark.Format.get(params.format));
 
-            if(params.verbose)
+            if (params.verbose)
                 System.out.println(result);
 
             // write result to file if needed

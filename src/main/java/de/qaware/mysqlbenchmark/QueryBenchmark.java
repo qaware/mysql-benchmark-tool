@@ -1,7 +1,3 @@
-/**
- * ﻿Copyright 2012, Deutsche Telekom AG, DTAG GHS GIS. All rights reserved.
- */
-
 package de.qaware.mysqlbenchmark;
 
 import de.qaware.mysqlbenchmark.jetm.CsvRenderer;
@@ -58,30 +54,32 @@ public class QueryBenchmark {
         }
     }
 
-    public enum Format{
+    public enum Format {
         JETM("jetm"),
         CSV("csv");
 
-        private Format(String format){
+        private Format(String format) {
         }
 
-        public static Format get(String format){
-            if(format != null && "csv".equals(format.toLowerCase())){
+        public static Format get(String format) {
+            if (format != null && "csv".equals(format.toLowerCase())) {
                 return CSV;
             } else {
                 return JETM;
             }
         }
     }
+
     /**
      * Get results for printing to console or writing to files
+     *
      * @return
      */
     public String getResult(Format format) {
         StringWriter sw = new StringWriter();
 
         MeasurementRenderer renderer = null;
-        switch(format){
+        switch (format) {
             case JETM:
                 renderer = new SimpleTextRenderer(sw);
                 break;
