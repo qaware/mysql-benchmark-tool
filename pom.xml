@@ -4,7 +4,7 @@
 
     <groupId>de.qaware.tools</groupId>
     <artifactId>mysql-query-benchmark</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>QAware MySQLQueryBenchmark</name>
