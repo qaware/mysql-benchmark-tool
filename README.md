@@ -1,6 +1,9 @@
 # MySQL Benchmark Tool
 MySQL Benchmark Tool is a lightweight commandline tool for repeatedly executing SQL-Statements from a previously written MySQL-Log.
 
+## Download
+You can find precompiled jars in the bin folder: https://github.com/qaware/mysql-benchmark-tool/tree/master/bin
+
 ## What is does and how to use it
 See the blog post on ...
 
