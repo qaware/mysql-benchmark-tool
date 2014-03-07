@@ -41,7 +41,10 @@ public class SQLStatementExecutor {
      */
     public ResultSet executeStatement(String name) {
         try {
+            // prepare statement for execution
             PreparedStatement ps = connection.prepareStatement(name);
+
+            // execute the statement and return the result
             return ps.executeQuery();
         } catch (SQLException e) {
             LOG.error("Execution of statement {} failed.", name, e);
@@ -67,6 +70,7 @@ public class SQLStatementExecutor {
         LOG.info("-------- Opening MySQL JDBC Connection ------------");
 
         try {
+            // load jdbc driver
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             LOG.error("Where is your MySQL JDBC Driver?", e);
@@ -76,6 +80,7 @@ public class SQLStatementExecutor {
         LOG.info("MySQL JDBC Driver found!");
 
         try {
+            // open new connection
             connection = DriverManager.getConnection(connectionString, username, password);
         } catch (SQLException e) {
             LOG.error("SQL connection failed!", e);

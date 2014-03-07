@@ -52,11 +52,14 @@ public class QueryParser {
      */
     public void parseLine(String line, String restrictedID, List<String> ignorePrefixes) {
 
+        // if restricted to one connection id, create a prefix to match all queries
         String prefixPattern = Strings.isNullOrEmpty(restrictedID) ? "\\d+" : restrictedID.toLowerCase();
 
+        // match all statements beginning with 'query' and the prefixPattern
         Pattern pattern = Pattern.compile("[\\s\\d:]*\\s+" + prefixPattern + "\\s+query\\s+(.*)$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(line);
 
+        // add all matches to the query store
         if (matcher.find()) {
 
             // ignore queries which start with special words
@@ -81,6 +84,8 @@ public class QueryParser {
     public void parseLogFile(String inputFilename, String restrictedID, List<String> ignorePrefixes) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(inputFilename));
         String line;
+
+        // parse the file line by line
         while ((line = br.readLine()) != null) {
             parseLine(line, restrictedID, ignorePrefixes);
         }
