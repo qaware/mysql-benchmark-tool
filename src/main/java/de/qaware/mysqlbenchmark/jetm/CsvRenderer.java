@@ -257,7 +257,11 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
      * Interface to a column entry
      */
     interface ColumnEntry {
-        public int getCurrentLength();
+        /**
+         * length
+         * @return the column length
+         */
+        int getCurrentLength();
 
         /**
          * write the entry
@@ -265,7 +269,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
          * @param totalWidth length to write
          * @throws IOException
          */
-        public void write(Writer writer, int totalWidth) throws IOException;
+        void write(Writer writer, int totalWidth) throws IOException;
     }
 
     /**
