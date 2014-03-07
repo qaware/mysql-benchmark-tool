@@ -34,9 +34,18 @@ import java.sql.SQLException;
  *
  * @author Felix Kelm felix.kelm@qaware.de
  */
-public class Main {
+final class Main {
     private static QueryParser parser = new QueryParser();
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
 
+    private Main() {
+        // Prevent instantiation
+    }
+
+    /**
+     * Main entry point.
+     * @param args args are described in the class {@link de.qaware.mysqlbenchmark.console.Parameters}
+     */
     public static void main(String[] args) {
 
         /**
@@ -49,53 +58,62 @@ public class Main {
             commander.parse(args);
         } catch (ParameterException e) {
             commander.usage();
-            System.out.println(e.getMessage());
+            LOG.error("Wrong parameters.", e);
             return;
         }
-        if (params.help) {
+        if (params.isHelp()) {
             commander.usage();
             return;
         }
 
+        SQLStatementExecutor executor = new SQLStatementExecutor();
 
         /**
          * parse the logfile and run queries
          */
         try {
-            parser.parseLogFile(params.inputFile, params.connectionID, params.ignorePrefixes);
-            System.out.println("Read " + parser.getQueries().size() + " queries from file '" + params.inputFile + "'.");
+            parser.parseLogFile(params.getInputFile(), params.getConnectionID(), params.getIgnorePrefixes());
+            LOG.info("Read " + parser.getQueries().size() + " queries from file '" + params.getInputFile() + "'.");
 
-            SQLStatementExecutor executor = new SQLStatementExecutor();
-            executor.initConnection(params.server + params.database, params.username, params.password);
+            executor.initConnection(params.getServer() + params.getDatabase(), params.getUsername(), params.getPassword());
             QueryBenchmark benchmark = new QueryBenchmark(executor);
 
             // process queries
             try {
-                System.out.println("Executing benchmark...");
+                LOG.info("Executing benchmark...");
                 benchmark.processQueries(parser.getQueries());
-                System.out.println("Benchmark completed");
+                LOG.info("Benchmark completed");
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Error processing queries.", e);
             }
             // get time measurements
-            String result = benchmark.getResult(QueryBenchmark.Format.get(params.format));
+            String result = benchmark.getResult(QueryBenchmark.Format.get(params.getFormat()));
 
-            if (params.verbose)
+            if (params.isVerbose()) {
                 System.out.println(result);
+            }
 
             // write result to file if needed
-            if (!Strings.isStringEmpty(params.resultfilename)) {
-                FileWriter writer = new FileWriter(params.resultfilename);
-                System.out.println("Writing result to " + params.resultfilename);
+            if (!Strings.isStringEmpty(params.getResultfilename())) {
+                FileWriter writer = new FileWriter(params.getResultfilename());
+                System.out.println("Writing result to " + params.getResultfilename());
                 writer.write(result);
                 writer.close();
             }
+
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOG.error("File not found.", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("IO Exception.", e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("SQL Exception.", e);
+        } finally {
+            try {
+                executor.closeConnection();
+            } catch (Exception e) {
+                /* Intentionally Swallow  Exception */
+                LOG.error("Could not close sql connection.");
+            }
         }
     }
 }

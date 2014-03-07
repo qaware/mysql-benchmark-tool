@@ -88,7 +88,6 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
      *
      * @param aTimeFormatter The number formatter.
      */
-
     public CsvRenderer(NumberFormat aTimeFormatter) {
         writer = new OutputStreamWriter(System.out);
         timeFormatter = aTimeFormatter;
@@ -124,6 +123,9 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
         }
     }
 
+    /**
+     * The results
+     */
     class Results {
         private Column nameColumn = new Column("Measurement Point");
         private Column numberColumn = new Column("#");
@@ -132,6 +134,10 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
         private Column maxColumn = new Column("Max");
         private Column totalColumn = new Column("Total");
 
+        /**
+         * results
+         * @param points points
+         */
         public Results(Map points) {
             Map map = new TreeMap(points);
             for (Iterator iterator = map.values().iterator(); iterator.hasNext(); ) {
@@ -140,7 +146,11 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
             }
         }
 
-        public void addTopLevel(Aggregate aAggregate) {
+        /**
+         * Top level
+         * @param aAggregate an aggregate
+         */
+        public final void addTopLevel(Aggregate aAggregate) {
             addLine(0, aAggregate);
 
             if (aAggregate.hasChilds()) {
@@ -148,6 +158,11 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
             }
         }
 
+        /**
+         * add nested
+         * @param nestingLevel nesting level
+         * @param childs children
+         */
         public void addNested(int nestingLevel, Map childs) {
             for (Iterator iterator = childs.values().iterator(); iterator.hasNext(); ) {
                 Aggregate point = (Aggregate) iterator.next();
@@ -158,6 +173,11 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
             }
         }
 
+        /**
+         * add a line
+         * @param nestingLevel nesting level
+         * @param aAggregate an aggregate
+         */
         public void addLine(int nestingLevel, Aggregate aAggregate) {
             nameColumn.addEntry(new NestedEntry(nestingLevel, aAggregate.getName()));
             numberColumn.addEntry(new RightAlignedEntry(String.valueOf(aAggregate.getMeasurements())));
@@ -167,75 +187,118 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
             totalColumn.addEntry(new RightAlignedEntry(timeFormatter.format(aAggregate.getTotal())));
         }
 
+        /**
+         * render to writer
+         * @param writer a writer to write to
+         * @throws IOException
+         */
         public void render(Writer writer) throws IOException {
-            Iterator nameIt = nameColumn.iterator();
-            Iterator numberIt = numberColumn.iterator();
-            Iterator avgIt = avgColumn.iterator();
-            Iterator minIt = minColumn.iterator();
-            Iterator maxIt = maxColumn.iterator();
-            Iterator totalIt = totalColumn.iterator();
+            Iterator<ColumnEntry> nameIt = nameColumn.iterator();
+            Iterator<ColumnEntry> numberIt = numberColumn.iterator();
+            Iterator<ColumnEntry> avgIt = avgColumn.iterator();
+            Iterator<ColumnEntry> minIt = minColumn.iterator();
+            Iterator<ColumnEntry> maxIt = maxColumn.iterator();
+            Iterator<ColumnEntry> totalIt = totalColumn.iterator();
 
             while (nameIt.hasNext()) {
-                ((ColumnEntry) nameIt.next()).write(writer, nameColumn.currentMaxSize);
+                (nameIt.next()).write(writer, nameColumn.currentMaxSize);
                 writer.write(VALUE_SEPARATOR);
-                ((ColumnEntry) numberIt.next()).write(writer, numberColumn.currentMaxSize);
+                (numberIt.next()).write(writer, numberColumn.currentMaxSize);
                 writer.write(VALUE_SEPARATOR);
-                ((ColumnEntry) avgIt.next()).write(writer, avgColumn.currentMaxSize);
+                (avgIt.next()).write(writer, avgColumn.currentMaxSize);
                 writer.write(VALUE_SEPARATOR);
-                ((ColumnEntry) minIt.next()).write(writer, minColumn.currentMaxSize);
+                (minIt.next()).write(writer, minColumn.currentMaxSize);
                 writer.write(VALUE_SEPARATOR);
-                ((ColumnEntry) maxIt.next()).write(writer, maxColumn.currentMaxSize);
+                (maxIt.next()).write(writer, maxColumn.currentMaxSize);
                 writer.write(VALUE_SEPARATOR);
-                ((ColumnEntry) totalIt.next()).write(writer, totalColumn.currentMaxSize);
+                (totalIt.next()).write(writer, totalColumn.currentMaxSize);
                 writer.write(separator);
             }
         }
     }
 
+    /**
+     * Column in CSV
+     */
     class Column {
         private int currentMaxSize = 0;
 
-        private List entries;
+        private List<ColumnEntry> entries;
 
-
+        /**
+         * a column
+         * @param aHeadLine the headline
+         */
         public Column(String aHeadLine) {
-            entries = new ArrayList();
+            entries = new ArrayList<ColumnEntry>();
             addEntry(new CenteredEntry(aHeadLine));
         }
 
+        /**
+         * entry in the column
+         * @param entry an entry
+         */
         public void addEntry(ColumnEntry entry) {
             int i = entry.getCurrentLength();
             currentMaxSize = currentMaxSize > i ? currentMaxSize : entry.getCurrentLength();
             entries.add(entry);
         }
 
-        public Iterator iterator() {
+        /**
+         * iterator over entries
+         * @return an iterator
+         */
+        public Iterator<ColumnEntry> iterator() {
             return entries.iterator();
         }
     }
 
+    /**
+     * Interface to a column entry
+     */
     interface ColumnEntry {
         public int getCurrentLength();
 
+        /**
+         * write the entry
+         * @param writer a writer to write to
+         * @param totalWidth length to write
+         * @throws IOException
+         */
         public void write(Writer writer, int totalWidth) throws IOException;
     }
 
-    class NestedEntry implements ColumnEntry {
+    /**
+     * A nested entry
+     */
+    static class NestedEntry implements ColumnEntry {
         private int nestingLevel;
         private String text;
 
-
+        /**
+         * constructor
+         * @param aNestingLevel the level
+         * @param aText a text
+         */
         public NestedEntry(int aNestingLevel, String aText) {
             nestingLevel = aNestingLevel;
             text = aText;
         }
 
-
+        /**
+         * length for nested entry
+         * @return current length
+         */
         public int getCurrentLength() {
             return 2 * nestingLevel + text.length() + 2;
         }
 
-
+        /**
+         * write a nested entry
+         * @param writer a writer to write to
+         * @param totalWidth length to write
+         * @throws IOException
+         */
         public void write(Writer writer, int totalWidth) throws IOException {
             writer.write(' ');
             for (int i = 0; i < nestingLevel * 2; i++) {
@@ -251,19 +314,34 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
         }
     }
 
+    /**
+     * Right aligned entry
+     */
     class RightAlignedEntry implements ColumnEntry {
         private String text;
 
+        /**
+         * Constructor
+         * @param aText text
+         */
         public RightAlignedEntry(String aText) {
             text = aText;
         }
 
-
+        /**
+         * Length
+         * @return the length
+         */
         public int getCurrentLength() {
             return text.length() + 2;
         }
 
-
+        /**
+         * Write
+         * @param writer a writer
+         * @param totalWidth total width
+         * @throws IOException
+         */
         public void write(Writer writer, int totalWidth) throws IOException {
             writer.write(' ');
             if (text.length() == totalWidth) {
@@ -278,19 +356,35 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
         }
     }
 
+    /**
+     * Centered Entry
+     */
     class CenteredEntry implements ColumnEntry {
         private String text;
 
+        /**
+         * Constructor
+         * @param aText text
+         */
         public CenteredEntry(String aText) {
             text = aText;
         }
 
-
+        /**
+         * Current length
+         * @return the current length
+         */
         public int getCurrentLength() {
             return text.length() + 2;
         }
 
 
+        /**
+         * write
+         * @param writer a writer to write to
+         * @param totalWidth length to write
+         * @throws IOException
+         */
         public void write(Writer writer, int totalWidth) throws IOException {
             if (totalWidth == getCurrentLength()) {
                 writer.write(' ');
@@ -300,7 +394,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
                 int remaining = totalWidth - text.length();
                 int prefix;
                 int posfix;
-                if (remaining % 2 == 1) {
+                if (remaining % 2 != 0) {
                     remaining++;
                     prefix = remaining / 2;
                     posfix = prefix - 1;

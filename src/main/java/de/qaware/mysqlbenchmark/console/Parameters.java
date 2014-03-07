@@ -28,58 +28,177 @@ import java.util.List;
  */
 public class Parameters {
 
+    /**
+     * mysql username
+     */
     @Parameter(names = {"-u"},
             description = "mysql username",
             required = true)
-    public String username;
+    private String username;
 
+    /**
+     * mysql password
+     */
     @Parameter(names = {"-p"},
             description = "mysql password",
             required = true)
-    public String password;
+    private String password;
 
+    /**
+     * The connection string to the mysql server (without database name)
+     */
     @Parameter(names = {"-s"},
             description = "The connection string to the mysql server (without database name)."
                     + " eg.: -c jdbc:mysql://localhost:3306/",
             required = false)
-    public String server = "jdbc:mysql://localhost:3306/";
+    private String server = "jdbc:mysql://localhost:3306/";
 
+    /**
+     * The database name. eg.: -db test_db
+     */
     @Parameter(names = {"-db"},
             description = "The database name. eg.: -db test_db",
             required = false)
-    public String database = "test_db";
+    private String database = "test_db";
 
+    /**
+     * Location of the logfile which contains the mysql queries to execute
+     */
     @Parameter(names = {"-log"},
             description = "Location of the logfile which contains the mysql queries to execute",
             required = false)
-    public String inputFile = "benchmarking-queries.sql";
+    private String inputFile = "benchmarking-queries.sql";
 
+    /**
+     * Location of the output file to write the results to
+     */
     @Parameter(names = {"-o"},
             description = "Location of the output file to write the results to",
             required = false)
-    public String resultfilename = "results.txt";
+    private String resultfilename = "results.txt";
 
-
+    /**
+     * Execute mysql query benchmark based on mysql logs
+     */
     @Parameter(names = {"-help", "-h"}, description = "Execute mysql query benchmark based on mysql logs",
             required = false)
-    public boolean help = false;
+    private boolean help = false;
 
+    /**
+     * Print all results to console
+     */
     @Parameter(names = {"-verbose", "-v"}, description = "Print all results to console",
             required = false)
-    public boolean verbose = false;
+    private boolean verbose = false;
 
+    /**
+     * Ignore statements which start with these prefixes, case insensitive. Enter a comma separated list of prefixes
+     */
     @Parameter(names = {"-ignore"}, description = "Ignore statements which start with these prefixes, case insensitive. Enter a comma separated list of prefixes.",
             required = false)
-    public List<String> ignorePrefixes = new ArrayList<String>();
+    private List<String> ignorePrefixes = new ArrayList<String>();
 
+    /**
+     * Only execute queries from the log with this connection id. This parameter is optional
+     */
     @Parameter(names = {"-id"},
             description = "Only execute queries from the log with this connection id. This parameter is optional.",
             required = false)
-    public String connectionID;
+    private String connectionID;
 
+    /**
+     * The result can be in default JETM style or CSV. JETM is default.
+     */
     @Parameter(names = {"-f"},
             description = "The result can be in default JETM style or CSV. JETM is default.",
             required = false)
-    public String format = "JETM";
+    private String format = "JETM";
 
+    /**
+     * mysql username
+     * @return username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * mysql password
+     * @return password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * The connection string to the mysql server (without database name)
+     * @return server
+     */
+    public String getServer() {
+        return server;
+    }
+
+    /**
+     * The database name. eg.: -db test_db
+     * @return database
+     */
+    public String getDatabase() {
+        return database;
+    }
+
+    /**
+     * Location of the logfile which contains the mysql queries to execute
+     * @return log file
+     */
+    public String getInputFile() {
+        return inputFile;
+    }
+
+    /**
+     * File to write the result to
+     * @return output filename
+     */
+    public String getResultfilename() {
+        return resultfilename;
+    }
+
+    /**
+     * display help
+     * @return true if help should be displayed
+     */
+    public boolean isHelp() {
+        return help;
+    }
+
+    /**
+     * Print all results to console
+     * @return true if in verbose mode
+     */
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    /**
+     * Ignore statements which start with these prefixes, case insensitive. Enter a comma separated list of prefixes
+     * @return prefixes to ignore
+     */
+    public List<String> getIgnorePrefixes() {
+        return ignorePrefixes;
+    }
+
+    /**
+     * Only execute queries from the log with this connection id. This parameter is optional
+     * @return connection id
+     */
+    public String getConnectionID() {
+        return connectionID;
+    }
+
+    /**
+     * Format for exporting results
+     * @return csv or jetm
+     */
+    public String getFormat() {
+        return format;
+    }
 }

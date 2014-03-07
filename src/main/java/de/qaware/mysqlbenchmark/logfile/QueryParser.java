@@ -37,7 +37,7 @@ public class QueryParser {
     /**
      * All parsed queries.
      *
-     * @return
+     * @return a list of queries
      */
     public List<String> getQueries() {
         return queries;
@@ -49,7 +49,6 @@ public class QueryParser {
      * @param line           String to parse for ONE query.
      * @param restrictedID   only parse the query if this connection id matches
      * @param ignorePrefixes do not accept queries which start with these prefixes. May be null if not needed.
-     * @throws IOException
      */
     public void parseLine(String line, String restrictedID, List<String> ignorePrefixes) {
 
@@ -74,8 +73,8 @@ public class QueryParser {
     /**
      * Read sql queries from the given logfile
      *
-     * @param inputFilename
-     * @param restrictedID
+     * @param inputFilename input file
+     * @param restrictedID query ids to ignore
      * @param ignorePrefixes do not accept queries which start with these prefixes. May be null if not needed.
      * @throws IOException
      */

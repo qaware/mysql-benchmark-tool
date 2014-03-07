@@ -16,6 +16,9 @@
 
 package de.qaware.mysqlbenchmark.sql;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 
 /**
@@ -27,16 +30,23 @@ import java.sql.*;
 public class SQLStatementExecutor {
     private Connection connection = null;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SQLStatementExecutor.class);
+
     /**
      * Executes a sql statement. Make sure the connection is initialized first.
      *
-     * @param name
-     * @return
+     * @param name statement string
+     * @return the result set
      * @throws SQLException
      */
-    public ResultSet executeStatement(String name) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement(name);
-        return ps.executeQuery();
+    public ResultSet executeStatement(String name) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(name);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            LOG.error("Execution of statement {} failed.", name, e);
+        }
+        return null;
     }
 
     /**
@@ -54,32 +64,24 @@ public class SQLStatementExecutor {
      * @param password         mysql password
      */
     public void initConnection(String connectionString, String username, String password) throws SQLException {
-        System.out.println("-------- Opening MySQL JDBC Connection ------------");
+        LOG.info("-------- Opening MySQL JDBC Connection ------------");
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.out.println("Where is your MySQL JDBC Driver?");
-            e.printStackTrace();
+            LOG.error("Where is your MySQL JDBC Driver?", e);
             return;
         }
 
-        System.out.println("MySQL JDBC Driver found!");
+        LOG.info("MySQL JDBC Driver found!");
 
         try {
-            connection = DriverManager
-                    .getConnection(connectionString, username, password);
-
+            connection = DriverManager.getConnection(connectionString, username, password);
         } catch (SQLException e) {
-            System.out.println("Connection Failed! Check output console.");
-            e.printStackTrace();
+            LOG.error("SQL connection failed!", e);
             throw e;
         }
 
-        if (connection != null) {
-            System.out.println("Connection established.");
-        } else {
-            System.out.println("Failed to make connection!");
-        }
+        LOG.info("Connection established.");
     }
 }

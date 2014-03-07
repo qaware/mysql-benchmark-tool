@@ -35,9 +35,13 @@ import java.util.List;
  * @author Felix Kelm felix.kelm@qaware.de
  */
 public class QueryBenchmark {
-    private static EtmMonitor etmMonitor;
+    private EtmMonitor etmMonitor;
     private SQLStatementExecutor executor;
 
+    /**
+     * Constructor
+     * @param executor executor to execute the sql queries.
+     */
     public QueryBenchmark(SQLStatementExecutor executor) {
         this.executor = executor;
     }
@@ -45,7 +49,7 @@ public class QueryBenchmark {
     /**
      * Run query list against the executor and measure timings with jetm
      *
-     * @param queries
+     * @param queries queries to execute
      * @throws SQLException
      */
     public void processQueries(List<String> queries) throws SQLException {
@@ -72,6 +76,9 @@ public class QueryBenchmark {
         }
     }
 
+    /**
+     * Export format for measurements. Currently supported formats are CSV and JETM-Style.
+     */
     public enum Format {
         JETM("jetm"),
         CSV("csv");
@@ -79,6 +86,12 @@ public class QueryBenchmark {
         private Format(String format) {
         }
 
+        /**
+         * Get the format from string. If the string is "csv" (ignoring case), the Format.CSV is returned, else JETM.
+         *
+         * @param format string describing the format
+         * @return a format for exporting the measurements
+         */
         public static Format get(String format) {
             if (format != null && "csv".equals(format.toLowerCase())) {
                 return CSV;
@@ -91,7 +104,7 @@ public class QueryBenchmark {
     /**
      * Get results for printing to console or writing to files
      *
-     * @return
+     * @return result
      */
     public String getResult(Format format) {
         StringWriter sw = new StringWriter();
@@ -111,9 +124,5 @@ public class QueryBenchmark {
 
         etmMonitor.render(renderer);
         return sw.getBuffer().toString();
-    }
-
-    public EtmMonitor getMonitor() {
-        return etmMonitor;
     }
 }
