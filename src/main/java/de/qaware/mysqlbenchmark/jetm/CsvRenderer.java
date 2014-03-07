@@ -220,7 +220,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
     /**
      * Column in CSV
      */
-    class Column {
+    static class Column {
         private int currentMaxSize = 0;
 
         private List<ColumnEntry> entries;
@@ -238,7 +238,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
          * entry in the column
          * @param entry an entry
          */
-        public void addEntry(ColumnEntry entry) {
+        public final void addEntry(ColumnEntry entry) {
             int i = entry.getCurrentLength();
             currentMaxSize = currentMaxSize > i ? currentMaxSize : entry.getCurrentLength();
             entries.add(entry);
@@ -363,7 +363,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
     /**
      * Centered Entry
      */
-    class CenteredEntry implements ColumnEntry {
+    static class CenteredEntry implements ColumnEntry {
         private String text;
 
         /**
