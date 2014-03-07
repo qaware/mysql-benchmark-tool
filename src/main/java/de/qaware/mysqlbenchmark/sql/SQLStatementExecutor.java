@@ -37,7 +37,6 @@ public class SQLStatementExecutor {
      *
      * @param name statement string
      * @return the result set
-     * @throws SQLException
      */
     public ResultSet executeStatement(String name) {
         try {
@@ -54,6 +53,8 @@ public class SQLStatementExecutor {
 
     /**
      * Close the connection if no longer needed
+     *
+     * @throws SQLException
      */
     public void closeConnection() throws SQLException {
         connection.close();
@@ -65,6 +66,7 @@ public class SQLStatementExecutor {
      * @param connectionString where to connect to the mysql server
      * @param username         mysql username
      * @param password         mysql password
+     * @throws SQLException
      */
     public void initConnection(String connectionString, String username, String password) throws SQLException {
         LOG.info("-------- Opening MySQL JDBC Connection ------------");
