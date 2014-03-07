@@ -16,8 +16,8 @@ Why do we need another benchmarking tool? What's so special about this one?
 * It's measuring execution times of all queries and aggregating identical executions. pt-query-digest supports general query log, but only without measuring execution times.
 * It's written in pure Java, making it the most realistic way of running queries against the server if you're developing a Java application.
 * It's small and easy to use, not a full blown full featured benchmarking suite.
-* It does not offer advanced filtering features, just restriction to connection ids and prefix matchings.
-* Measurements can be exported in either CSV for easy excel import or in JETM-Style.
+* It does not offer advanced filtering methods, just restriction to connection ids and prefix matchings.
+* Measurements can be exported in either CSV for easy Excel import or in JETM-Style.
 
 ## Usage
     Usage: MySQL Benckmark Tool [options]
