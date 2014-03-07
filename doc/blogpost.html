@@ -1,166 +1,164 @@
-<span style="background-color: yellow;">FKE: Draft in progress. Gibt es eine Möglichkeit die Code-Screenshots zu zoomen?</span>
-<br/>
-<br/>
-In some cases, it's necessary to run a simple single-component benchmark on a MySQL server. In opposition to a full-stack benchmark, a single-component benchmark only targets the isolated database. It can be easily modified to target the network connection, too.
-<br/>
-<br/>
-The benchmarking strategy presented in this article, records all queries during a real application run. Using a simple benchmarking tool written in java, allows you to re-run all recorded queries multiple times and record all query runtimes.
-<br/>
-<br/>
-Besides slow query log and the built in profiling mechanism, MySQL offers the often unnoticed <a
-        href="http://dev.mysql.com/doc/refman/5.5/en/query-log.html">general query
-    log</a>. You can use this mechanism to log all queries which run while executing various use cases in your application. My Idea was to use the general query log to re-run all queries on the MySQL server and measure their timings. This enables me to reproduce the same use case multiple times on the same or on different MySQL servers or in different network configurations. Measuring the performance based on the same query execution makes measurements comparable.
-<br/>
-This strategy is useful if you want to:<br/>
+This article describes a simple java tool for recording and replaying MySQL queries while measuring their execution times. The replay mechanism makes the measurements comparable across different environments.<br />
+<br />
+Why do we need another benchmarking tool? What's so special about this one?<br />
 <ul>
-    <li>simply record and replay&nbsp;MySQL&nbsp;queries including all MySQL-parameters&nbsp;while executing a specific
+<li>It's capable of reading and replaying MySQL's '<a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general query logs</a>', not '<a href="http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html">slow query logs</a>' and not tcpdumps. <a href="http://www.percona.com/doc/percona-playback/">Percona Playback</a>&nbsp;in version 0.3 doesn't supports '<a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general query logs</a>'.</li>
+<li>It's measuring execution times of all queries and aggregating identical executions.&nbsp;<a href="http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html">pt-query-digest</a>&nbsp;supports <a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general query lo</a>g, but only without measuring execution times.</li>
+<li>It's written in pure Java, making it the most realistic way of running queries against the server if you're developing a Java application.</li>
+<li>It's small and easy to use, not a full blown full featured benchmarking suite.</li>
+<li>It does not offer advanced filtering methods, just restriction to connection ids and prefix matchings.</li>
+<li>Measurements can be exported in either CSV for easy Excel import or in <a href="http://jetm.void.fm/">JETM</a>-Style.</li>
+</ul>
+<br />
+<br />
+In some cases, it's necessary to run a simple single-component benchmark on a MySQL server. In opposition to a full-stack benchmark, a single-component benchmark only targets the isolated database. It can easily be modified to target the network connection, too.<br />
+<br />
+The benchmarking strategy presented in this article, records all queries during a real application run. Using a simple benchmarking tool written in java, allows you to re-run all recorded queries multiple times and record all query runtimes.
+<br />
+<br />
+Besides <a href="http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html">slow query log</a> and the built in profiling mechanisms, MySQL offers the often unnoticed <a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general query
+    log</a>. You can use this mechanism to log all queries which run while executing various use cases in your application. My idea was to use the <a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general query log</a> to re-run all queries on the MySQL server and measure their timings. This enables me to reproduce the same use case multiple times on the same or on different MySQL servers or in different network configurations. Measuring the performance based on the same query execution makes measurements comparable.
+<br />
+<br />
+This strategy is useful if you want to:<br />
+<ul>
+<li>simply record and replay&nbsp;MySQL&nbsp;queries including all MySQL-parameters&nbsp;while executing a specific
         use case
     </li>
-    <li>compare MySQL performance on different server instances</li>
-    <li>compare MySQL performance in different network configurations to spot possible network bottlenecks</li>
-    <li>monitor&nbsp;MySQL&nbsp;performance continuously</li>
-    <li>spot and count slowest queries while executing a possibly complex use case</li>
+<li>compare MySQL performance on different server instances</li>
+<li>compare MySQL performance in different network configurations to spot possible network bottlenecks</li>
+<li>monitor&nbsp;MySQL&nbsp;performance continuously</li>
+<li>spot and count slowest queries while executing a possibly complex use case</li>
 </ul>
-<br/>
-The following picture shows the whole benchmarking strategy in a sequential process: You execute a use case in your application with enabled general log in mysql. You can use this logfile to re-run all queries which were executed on the server during your usecase. The benchmark results can be viewed as text files or evaluated after an excel import.
-<br/>
-<br/>
+<br />
+The following picture shows the whole benchmarking strategy in a sequential process: You execute a use case in your application with enabled <a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general log</a> in mysql. You can use this logfile to re-run all queries which were executed on the server during your usecase. The benchmark results can be viewed as text files or evaluated after an Excel import.
+<br />
+<br />
 <div class="separator" style="clear: both; text-align: center;">
-    <a href="http://3.bp.blogspot.com/-596AGlEzJXg/Up3Ei7n0RiI/AAAAAAAAACQ/pMJBN6Xsjz0/s1600/BigPicture.png"
-       imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0"
-                                                                         src="http://3.bp.blogspot.com/-596AGlEzJXg/Up3Ei7n0RiI/AAAAAAAAACQ/pMJBN6Xsjz0/s1600/BigPicture.png"
-                                                                         height="640" width="560"/></a></div>
-<br/>
+<a href="http://3.bp.blogspot.com/-596AGlEzJXg/Up3Ei7n0RiI/AAAAAAAAACQ/pMJBN6Xsjz0/s1600/BigPicture.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://3.bp.blogspot.com/-596AGlEzJXg/Up3Ei7n0RiI/AAAAAAAAACQ/pMJBN6Xsjz0/s1600/BigPicture.png" height="640" width="560" /></a></div>
+<br />
 <div class="separator" style="clear: both; text-align: center;">
 </div>
-All I needed to do is writing a small tool which is able to parse the general log file and re-run all queries against a configurable mysql server. The output should be configurable in
+All I needed to do is writing a small tool which is able to parse the <a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general log file</a> and re-run all queries against a configurable mysql server. The output should be configurable in
 <a href="http://jetm.void.fm/">JETM</a>-Style or csv-format which allows me to see all query timings in average, min, max, total and the count of each querie's excution.
-<br/>
-<br/>
+<br />
+<br />
 <h2>
     Getting the log</h2>
-Many developers know of the slow query log and the built in profiling mechanism which allow you to analyze and optimize single queries. But it seems not so many developers know about the general query log which is simply activated by setting one sql variable like this:
-<br/>
-<br/>
-<pre class="programlisting"
-     style="background-color: #eeeeee; border: 0px; font-family: 'Courier New', Courier, fixed, monospace; font-size: 13px; line-height: 20px; max-width: 720px; outline: 0px; padding: 2px; vertical-align: baseline;">SET GLOBAL general_log = 'ON';</pre>
-<br/>
-This method works on any platform and does not require a server restart.<br/>
-<br/>
+Many developers know of the <a href="http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html">slow query log</a> and the built in profiling mechanism which allow you to analyze and optimize single queries. But it seems not so many developers know about the <a href="http://dev.mysql.com/doc/refman/5.7/en/query-log.html">general query log</a> which is simply activated by setting one sql variable like this:
+<br />
+<br />
+<pre class="programlisting" style="background-color: #eeeeee; border: 0px; font-family: 'Courier New', Courier, fixed, monospace; font-size: 13px; line-height: 20px; max-width: 720px; outline: 0px; padding: 2px; vertical-align: baseline;">SET GLOBAL general_log = 'ON';</pre>
+<br />
+This method works on any platform and does not require a server restart.<br />
+<br />
 To specify a log file name, use --general_log_file=file_name. To specify the log destination, use --log-output (as described by dev.mysql.com in "
-<a href="http://dev.mysql.com/doc/refman/5.5/en/log-destinations.html">Selecting General Query and Slow Query Log Output
-    Destinations</a>")<br/>
-<br/>
+<a href="http://dev.mysql.com/doc/refman/5.7/en/log-destinations.html">Selecting General Query and Slow Query Log Output
+    Destinations</a>")<br />
+<br />
 <h2>
     The tool: MySQLQueryBenchmark</h2>
 <div>
-    MySQLQueryBenchmark is a java console application, taking a slow query log, executing the contained queries and
-    returning their execution times as JETM-measurements or in csv-format.
+MySQLQueryBenchmark is a java console application, taking a <a href="http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html">slow query log</a>, executing the contained queries and
+    returning their execution times as <a href="http://jetm.void.fm/">JETM</a>-measurements or in csv-format.
 </div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    Usage for impatient:
+Usage for impatient:
 </div>
 <div>
-    <pre class="programlisting"
-         style="background-color: #eeeeee; border: 0px; font-family: 'Courier New', Courier, fixed, monospace; font-size: 13px; line-height: 20px; max-width: 720px; outline: 0px; padding: 2px; vertical-align: baseline;"># java -jar mysqlquerybenchmarking.jar -log LOG_FILE -db DATABASE -p MYSQL_USERNAME -u MYSQL_PASSWORD -ignore show,connect,set</pre>
+<pre class="programlisting" style="background-color: #eeeeee; border: 0px; font-family: 'Courier New', Courier, fixed, monospace; font-size: 13px; line-height: 20px; max-width: 720px; outline: 0px; padding: 2px; vertical-align: baseline;"># java -jar mysqlquerybenchmarking.jar -log LOG_FILE -db DATABASE -p MYSQL_USERNAME -u MYSQL_PASSWORD -ignore show,connect,set</pre>
 </div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    The Results will be stored in results.txt in JETM-Format by default. If nothing different is specified,
+The results will be stored in results.txt in <a href="http://jetm.void.fm/">JETM</a>-Format by default. If nothing different is specified,
     localhost:3306 is being used as mysql server.
 </div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    There are useful command line options which allow you to only execute specific queries, which match a prefix or are
+There are useful command line options which allow you to only execute specific queries, which match a prefix or are
     logged under one connection-id.
 </div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    <script src="https://gist.github.com/FelixKelm/c2a93d1d41ac0f296400.js?file=usage.txt"></script>
+<script src="https://gist.github.com/FelixKelm/c2a93d1d41ac0f296400.js?file=usage.txt"></script>
 </div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    After executing all queries, the output in JETM-Format will look similar to this:
+After executing all queries, the output in <a href="http://jetm.void.fm/">JETM</a>-Format will look similar to this:
 </div>
 <div>
-    <br/></div>
+<br /></div>
 <div class="separator" style="clear: both; text-align: center;">
-    <a href="http://3.bp.blogspot.com/-zF_ji1ufRRo/UpzPcCUm_cI/AAAAAAAAAAk/6YyKDcBohZE/s1600/sample_output.png"
-       imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0"
-                                                                         src="http://3.bp.blogspot.com/-zF_ji1ufRRo/UpzPcCUm_cI/AAAAAAAAAAk/6YyKDcBohZE/s1600/sample_output.png"
-                                                                         height="140" width="400"/></a></div>
+<a href="http://3.bp.blogspot.com/-zF_ji1ufRRo/UpzPcCUm_cI/AAAAAAAAAAk/6YyKDcBohZE/s1600/sample_output.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://3.bp.blogspot.com/-zF_ji1ufRRo/UpzPcCUm_cI/AAAAAAAAAAk/6YyKDcBohZE/s1600/sample_output.png" height="140" width="400" /></a></div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    <br/></div>
+<br /></div>
 <div>
-    In some cases, you proably want to compare multiple results or evaluate the values in a program like Excel. The
-    Benchmarking Tool supports csv output using the parameter -f csv. The output will look similar to this:<br/>
-    <br/>
-
-    <div class="separator" style="clear: both; text-align: center;">
-        <a href="http://4.bp.blogspot.com/-plbBnbAJVyw/Up3DCamrdNI/AAAAAAAAACE/o00BaFcixxA/s1600/csv_2013-12-03_123935.png"
-           imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0"
-                                                                             src="http://4.bp.blogspot.com/-plbBnbAJVyw/Up3DCamrdNI/AAAAAAAAACE/o00BaFcixxA/s1600/csv_2013-12-03_123935.png"
-                                                                             height="126" width="400"/></a></div>
-    <span style="font-size: small;"><br/></span>
-    <span style="font-size: small;">This file can easily be opened in excel&nbsp;</span><span style="font-size: small;">for further evaluation</span><span
-        style="font-size: small;">.</span></div>
+In some cases, you proably want to compare multiple results or evaluate the values in a program like Excel. The benchmarking tool supports csv output using the parameter -f csv. The output will look similar to this:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://4.bp.blogspot.com/-plbBnbAJVyw/Up3DCamrdNI/AAAAAAAAACE/o00BaFcixxA/s1600/csv_2013-12-03_123935.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://4.bp.blogspot.com/-plbBnbAJVyw/Up3DCamrdNI/AAAAAAAAACE/o00BaFcixxA/s1600/csv_2013-12-03_123935.png" height="126" width="400" /></a></div>
+<span style="font-size: small;"><br /></span>
+    <span style="font-size: small;">This file can easily be opened in Excel&nbsp;</span><span style="font-size: small;">for further evaluation</span><span style="font-size: small;">.</span></div>
 <h2>
-    <br/></h2>
+    </h2>
 <h2>
     Digging deeper</h2>
 <div>
-    As a developer, I cannot resist telling you how the tool is implemented.<br/>
-    <br/></div>
+As a developer, I cannot resist telling you how the tool is implemented.<br />
+<br /></div>
 <div>
-    <ul>
-        <li>For command line parsing, the tool uses <a href="http://jcommander.org/">jcommander</a>. Parameters are
+<ul>
+<li>For command line parsing, the tool uses <a href="http://jcommander.org/">jcommander</a>. Parameters are
             simply stored in a parameter class like this:
-            <br/>
+            <br />
             <script src="https://gist.github.com/FelixKelm/c2a93d1d41ac0f296400.js?file=Parameters.java"></script>
-            <br/>
+            <br />
         </li>
-        <li>The class QueryParser accepts one line from the log file, a restriction-id and a prefix to parse a query
+<li>The class QueryParser accepts one line from the log file, a restriction-id and a prefix to parse a query
             from that line if possible:
-            <br/>
+            <br />
             <script src="https://gist.github.com/FelixKelm/c2a93d1d41ac0f296400.js?file=QueryParser.java"></script>
-            <br/>
+            <br />
         </li>
-        <li>
-            The class QueryBenchmark executes all queries and measures their timings using JETM:
-            <br/>
+<li>
+            The class QueryBenchmark executes all queries and measures their timings using <a href="http://jetm.void.fm/">JETM</a>:
+            <br />
             <script src="https://gist.github.com/FelixKelm/c2a93d1d41ac0f296400.js?file=QueryBenchmark.java"></script>
-            <br/>
+            <br />
         </li>
-        <li>
-            For Query execution, the class SQLStatementExecutor fires against the MySQL-server:
-            <br/>
+<li>
+            For query execution, the class SQLStatementExecutor fires against the MySQL-server:
+            <br />
             <script src="https://gist.github.com/FelixKelm/c2a93d1d41ac0f296400.js?file=SQLStatementExecutor.java"></script>
-            <br/>
+            <br />
         </li>
-        <li>
-            For csv output, I simply created a class CsvRenderer derived from JETM's MeasurementRenderer. I used the
+<li>
+            For csv output, I simply created a class CsvRenderer derived from <a href="http://jetm.void.fm/">JETM's </a>MeasurementRenderer. I used the
             SimpleTextRenderer as template and adjusted it to generate a csv output.
         </li>
-
-    </ul>
+</ul>
 </div>
-
 <div>
-    <br/>
-    <br/>
-    <br/>
-    <div>
-        Enjoy Benchmarking with this tool.
+<br />
+<h2>
+Downloads</h2>
+<a href="https://github.com/qaware/mysql-benchmark-tool">Git tepository</a><br />
+<a href="https://github.com/qaware/mysql-benchmark-tool/tree/master/bin">Precompiled jar</a><br />
+This tool is open source under Apache License, Version 2.0.<br />
+<br />
+<br />
+<div>
+Enjoy benchmarking with this tool.
     </div>
-    <div>
-        Have a nice day!
+<div>
+Have a nice day!
     </div>
 </div>
