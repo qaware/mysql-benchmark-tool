@@ -29,7 +29,6 @@ import java.util.*;
  * Extending the JETM MeasurementRenderer for enabling CSV export of JETM measurements.
  *
  * @author felix.kelm (felix.kelm@qaware.de)
- *
  */
 public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
@@ -136,6 +135,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * results
+         *
          * @param points points
          */
         public Results(Map points) {
@@ -148,9 +148,10 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * Top level
+         *
          * @param aAggregate an aggregate
          */
-        public final void addTopLevel(Aggregate aAggregate) {
+        private final void addTopLevel(Aggregate aAggregate) {
             addLine(0, aAggregate);
 
             if (aAggregate.hasChilds()) {
@@ -160,8 +161,9 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * add nested
+         *
          * @param nestingLevel nesting level
-         * @param childs children
+         * @param childs       children
          */
         public void addNested(int nestingLevel, Map childs) {
             for (Iterator iterator = childs.values().iterator(); iterator.hasNext(); ) {
@@ -175,8 +177,9 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * add a line
+         *
          * @param nestingLevel nesting level
-         * @param aAggregate an aggregate
+         * @param aAggregate   an aggregate
          */
         public void addLine(int nestingLevel, Aggregate aAggregate) {
             nameColumn.addEntry(new NestedEntry(nestingLevel, aAggregate.getName()));
@@ -189,6 +192,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * render to writer
+         *
          * @param writer a writer to write to
          * @throws IOException
          */
@@ -227,6 +231,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * a column
+         *
          * @param aHeadLine the headline
          */
         public Column(String aHeadLine) {
@@ -236,6 +241,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * entry in the column
+         *
          * @param entry an entry
          */
         public final void addEntry(ColumnEntry entry) {
@@ -246,6 +252,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * iterator over entries
+         *
          * @return an iterator
          */
         public Iterator<ColumnEntry> iterator() {
@@ -259,13 +266,15 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
     interface ColumnEntry {
         /**
          * length
+         *
          * @return the column length
          */
         int getCurrentLength();
 
         /**
          * write the entry
-         * @param writer a writer to write to
+         *
+         * @param writer     a writer to write to
          * @param totalWidth length to write
          * @throws IOException
          */
@@ -281,8 +290,9 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * constructor
+         *
          * @param aNestingLevel the level
-         * @param aText a text
+         * @param aText         a text
          */
         public NestedEntry(int aNestingLevel, String aText) {
             nestingLevel = aNestingLevel;
@@ -291,6 +301,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * length for nested entry
+         *
          * @return current length
          */
         public int getCurrentLength() {
@@ -299,7 +310,8 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * write a nested entry
-         * @param writer a writer to write to
+         *
+         * @param writer     a writer to write to
          * @param totalWidth length to write
          * @throws IOException
          */
@@ -326,6 +338,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * Constructor
+         *
          * @param aText text
          */
         public RightAlignedEntry(String aText) {
@@ -334,6 +347,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * Length
+         *
          * @return the length
          */
         public int getCurrentLength() {
@@ -342,7 +356,8 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * Write
-         * @param writer a writer
+         *
+         * @param writer     a writer
          * @param totalWidth total width
          * @throws IOException
          */
@@ -368,6 +383,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * Constructor
+         *
          * @param aText text
          */
         public CenteredEntry(String aText) {
@@ -376,6 +392,7 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * Current length
+         *
          * @return the current length
          */
         public int getCurrentLength() {
@@ -385,7 +402,8 @@ public class CsvRenderer implements etm.core.renderer.MeasurementRenderer {
 
         /**
          * write
-         * @param writer a writer to write to
+         *
+         * @param writer     a writer to write to
          * @param totalWidth length to write
          * @throws IOException
          */

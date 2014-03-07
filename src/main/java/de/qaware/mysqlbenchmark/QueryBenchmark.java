@@ -40,6 +40,7 @@ public class QueryBenchmark {
 
     /**
      * Constructor
+     *
      * @param executor executor to execute the sql queries.
      */
     public QueryBenchmark(SQLStatementExecutor executor) {

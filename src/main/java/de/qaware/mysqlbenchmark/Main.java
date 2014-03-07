@@ -44,6 +44,7 @@ final class Main {
 
     /**
      * Main entry point.
+     *
      * @param args args are described in the class {@link de.qaware.mysqlbenchmark.console.Parameters}
      */
     public static void main(String[] args) {
@@ -58,7 +59,6 @@ final class Main {
             commander.parse(args);
         } catch (ParameterException e) {
             commander.usage();
-            LOG.error("Wrong parameters.", e);
             return;
         }
         if (params.isHelp()) {
@@ -90,13 +90,13 @@ final class Main {
             String result = benchmark.getResult(QueryBenchmark.Format.get(params.getFormat()));
 
             if (params.isVerbose()) {
-                System.out.println(result);
+                LOG.info(result);
             }
 
             // write result to file if needed
             if (!Strings.isStringEmpty(params.getResultfilename())) {
                 FileWriter writer = new FileWriter(params.getResultfilename());
-                System.out.println("Writing result to " + params.getResultfilename());
+                LOG.info("Writing result to " + params.getResultfilename());
                 writer.write(result);
                 writer.close();
             }

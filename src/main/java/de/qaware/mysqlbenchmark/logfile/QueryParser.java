@@ -76,8 +76,8 @@ public class QueryParser {
     /**
      * Read sql queries from the given logfile
      *
-     * @param inputFilename input file
-     * @param restrictedID query ids to ignore
+     * @param inputFilename  input file
+     * @param restrictedID   query ids to ignore
      * @param ignorePrefixes do not accept queries which start with these prefixes. May be null if not needed.
      * @throws IOException
      */

@@ -116,6 +116,7 @@ public class Parameters {
 
     /**
      * mysql username
+     *
      * @return username
      */
     public String getUsername() {
@@ -124,6 +125,7 @@ public class Parameters {
 
     /**
      * mysql password
+     *
      * @return password
      */
     public String getPassword() {
@@ -132,6 +134,7 @@ public class Parameters {
 
     /**
      * The connection string to the mysql server (without database name)
+     *
      * @return server
      */
     public String getServer() {
@@ -140,6 +143,7 @@ public class Parameters {
 
     /**
      * The database name. eg.: -db test_db
+     *
      * @return database
      */
     public String getDatabase() {
@@ -148,6 +152,7 @@ public class Parameters {
 
     /**
      * Location of the logfile which contains the mysql queries to execute
+     *
      * @return log file
      */
     public String getInputFile() {
@@ -156,6 +161,7 @@ public class Parameters {
 
     /**
      * File to write the result to
+     *
      * @return output filename
      */
     public String getResultfilename() {
@@ -164,6 +170,7 @@ public class Parameters {
 
     /**
      * display help
+     *
      * @return true if help should be displayed
      */
     public boolean isHelp() {
@@ -172,6 +179,7 @@ public class Parameters {
 
     /**
      * Print all results to console
+     *
      * @return true if in verbose mode
      */
     public boolean isVerbose() {
@@ -180,6 +188,7 @@ public class Parameters {
 
     /**
      * Ignore statements which start with these prefixes, case insensitive. Enter a comma separated list of prefixes
+     *
      * @return prefixes to ignore
      */
     public List<String> getIgnorePrefixes() {
@@ -188,6 +197,7 @@ public class Parameters {
 
     /**
      * Only execute queries from the log with this connection id. This parameter is optional
+     *
      * @return connection id
      */
     public String getConnectionID() {
@@ -196,6 +206,7 @@ public class Parameters {
 
     /**
      * Format for exporting results
+     *
      * @return csv or jetm
      */
     public String getFormat() {
