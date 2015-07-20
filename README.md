@@ -5,7 +5,7 @@ MySQL Benchmark Tool is a lightweight commandline tool for repeatedly executing 
 You can find precompiled jars in the bin folder: https://github.com/qaware/mysql-benchmark-tool/tree/master/bin
 
 ## What it does and how to use it
-There's a blog post with more detailed explanation at: http://blog.qaware.de/
+There's a blog post with more detailed explanation at: http://qaware.blogspot.de/2014/12/sql-benchmarking-tool-for-java.html
 
 Here's a small abstract:
 
