@@ -23,6 +23,7 @@ import de.qaware.mysqlbenchmark.console.Parameters;
 import de.qaware.mysqlbenchmark.logfile.QueryParser;
 import de.qaware.mysqlbenchmark.sql.SQLStatementExecutor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -72,6 +73,11 @@ final class Main {
          * parse the logfile and run queries
          */
         try {
+            if(!new File(params.getInputFile()).exists()){
+                LOG.error("The log file '{}' was not found. Please check your -log parameter.", params.getInputFile());
+                return;
+            }
+
             parser.parseLogFile(params.getInputFile(), params.getConnectionID(), params.getIgnorePrefixes());
             LOG.info("Read " + parser.getQueries().size() + " queries from file '" + params.getInputFile() + "'.");
 
